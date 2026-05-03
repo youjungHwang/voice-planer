@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import com.voiceplaner.app.api.ClaudeApiClient
+import com.voiceplaner.app.api.LocalTransactionParser
 import com.voiceplaner.app.data.model.Transaction
 import com.voiceplaner.app.data.model.TransactionType
 import com.voiceplaner.app.data.repository.TransactionRepository
@@ -22,7 +22,6 @@ import javax.inject.Singleton
 @Singleton
 class SpeechManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val claudeApiClient: ClaudeApiClient,
     private val repository: TransactionRepository
 ) {
     private var speechRecognizer: SpeechRecognizer? = null
@@ -62,8 +61,8 @@ class SpeechManager @Inject constructor(
     }
 
     private fun processText(text: String) {
-        scope.launch {
-            val parsed = claudeApiClient.parseTransaction(text) ?: return@launch
+        scope.launch(Dispatchers.IO) {
+            val parsed = LocalTransactionParser.parse(text) ?: return@launch
             repository.insert(
                 Transaction(
                     date = parsed.date,

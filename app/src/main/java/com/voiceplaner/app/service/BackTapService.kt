@@ -29,9 +29,9 @@ class BackTapService : Service(), SensorEventListener {
     private var isRecording = false
 
     companion object {
-        private const val TAP_THRESHOLD = 15f
-        private const val DOUBLE_TAP_WINDOW = 800L
-        private const val MIN_TAP_INTERVAL = 100L
+        private const val TAP_THRESHOLD = 7f
+        private const val DOUBLE_TAP_WINDOW = 1000L
+        private const val MIN_TAP_INTERVAL = 80L
         private const val CHANNEL_ID = "voice_planer_channel"
         private const val NOTIFICATION_ID = 1
     }
@@ -41,7 +41,7 @@ class BackTapService : Service(), SensorEventListener {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         startForeground(NOTIFICATION_ID, buildNotification("가계부 대기 중"))
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
